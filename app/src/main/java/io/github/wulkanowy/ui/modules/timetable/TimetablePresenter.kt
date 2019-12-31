@@ -131,9 +131,12 @@ class TimetablePresenter @Inject constructor(
         disposable.apply {
             clear()
             add(studentRepository.getCurrentStudent()
-                .flatMap { semesterRepository.getCurrentSemester(it) }
+                .flatMap { student ->
+                    semesterRepository
+                        .getCurrentSemester(student)
+                        .flatMap { timetableRepository.getTimetable(student, it, currentDate, currentDate, forceRefresh) }
+                }
                 .delay(200, MILLISECONDS)
-                .flatMap { timetableRepository.getTimetable(it, currentDate, currentDate, forceRefresh) }
                 .map { items -> items.map { TimetableItem(it) } }
                 .map { items -> items.sortedBy { it.lesson.number } }
                 .subscribeOn(schedulers.backgroundThread)

@@ -5,6 +5,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import androidx.core.app.AlarmManagerCompat
+import io.github.wulkanowy.data.db.entities.Student
 import io.github.wulkanowy.data.db.entities.Timetable
 import io.github.wulkanowy.data.repositories.preferences.PreferencesRepository
 import io.github.wulkanowy.services.alarm.AlarmBroadcastReceiver.Companion.LESSON_END
@@ -17,6 +18,7 @@ import io.github.wulkanowy.services.alarm.AlarmBroadcastReceiver.Companion.LESSO
 import io.github.wulkanowy.services.alarm.AlarmBroadcastReceiver.Companion.NOTIFICATION_TYPE_CURRENT
 import io.github.wulkanowy.services.alarm.AlarmBroadcastReceiver.Companion.NOTIFICATION_TYPE_LAST_LESSON_CANCELLATION
 import io.github.wulkanowy.services.alarm.AlarmBroadcastReceiver.Companion.NOTIFICATION_TYPE_UPCOMING
+import io.github.wulkanowy.services.alarm.AlarmBroadcastReceiver.Companion.STUDENT_NAME
 import io.github.wulkanowy.utils.toLocalDateTime
 import io.github.wulkanowy.utils.toTimestamp
 import org.threeten.bp.LocalDateTime.now
@@ -39,14 +41,15 @@ class AlarmHelper @Inject constructor(
         Timber.d("Timetable notifications canceled")
     }
 
-    fun scheduleNotifications(lessons: List<Timetable>, studentId: Int = 1) {
-        if (!preferencesRepository.isUpcomingLessonsNotificationsEnable) return cancelNotifications(lessons, studentId)
+    fun scheduleNotifications(lessons: List<Timetable>, student: Student) {
+        if (!preferencesRepository.isUpcomingLessonsNotificationsEnable) return cancelNotifications(lessons, student.studentId)
 
         Timber.d("${lessons.size} to schedule, current millis: ${now().toTimestamp()}")
         lessons.groupBy { it.date }.map { week -> week.value.sortedBy { it.date } }.map { it.filter { lesson -> !lesson.canceled } }.map { day ->
             val numberOfLessons = day.size
             day.forEachIndexed { index, lesson ->
                 val intent = with(Intent(context, AlarmBroadcastReceiver::class.java)) {
+                    putExtra(STUDENT_NAME, student.studentName)
                     putExtra(LESSON_ROOM, lesson.room)
                     putExtra(LESSON_START, lesson.start.toTimestamp())
                     putExtra(LESSON_END, lesson.end.toTimestamp())
@@ -55,9 +58,9 @@ class AlarmHelper @Inject constructor(
                     putExtra(LESSON_NEXT_ROOM, day.getOrNull(index + 1)?.room)
                 }
 
-                scheduleUpcoming(lesson, day.getOrNull(index - 1), intent, studentId)
-                scheduleCurrent(lesson, intent, studentId)
-                if (numberOfLessons - 1 == index) scheduleLastLessonCancellation(lesson, intent, studentId)
+                scheduleUpcoming(lesson, day.getOrNull(index - 1), intent, student.studentId)
+                scheduleCurrent(lesson, intent, student.studentId)
+                if (numberOfLessons - 1 == index) scheduleLastLessonCancellation(lesson, intent, student.studentId)
             }
         }
 
@@ -65,7 +68,7 @@ class AlarmHelper @Inject constructor(
 
         val canceledLessons = lessons.filter { it.canceled }
         Timber.d("${canceledLessons.size} to de-schedule")
-        cancelNotifications(canceledLessons, studentId)
+        cancelNotifications(canceledLessons, student.studentId)
     }
 
     private fun scheduleUpcoming(lesson: Timetable, previous: Timetable?, intent: Intent, studentId: Int) {

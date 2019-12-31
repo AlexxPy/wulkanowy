@@ -16,6 +16,8 @@ import timber.log.Timber
 class AlarmBroadcastReceiver : BroadcastReceiver() {
 
     companion object {
+        const val STUDENT_NAME = "student_name"
+
         const val LESSON_TYPE = "type"
         const val NOTIFICATION_TYPE_CURRENT = 1
         const val NOTIFICATION_TYPE_UPCOMING = 2
@@ -37,6 +39,8 @@ class AlarmBroadcastReceiver : BroadcastReceiver() {
         NotificationManagerCompat.from(context).cancelAll()
         if (type == NOTIFICATION_TYPE_LAST_LESSON_CANCELLATION) return
 
+        val studentName = intent.getStringExtra(STUDENT_NAME)
+
         val subject = intent.getStringExtra(LESSON_TITLE)
         val room = intent.getStringExtra(LESSON_ROOM)
 
@@ -51,11 +55,12 @@ class AlarmBroadcastReceiver : BroadcastReceiver() {
         showNotification(context, type,
             if (type == NOTIFICATION_TYPE_CURRENT) end else start,
             context.getString(if (type == NOTIFICATION_TYPE_CURRENT) R.string.timetable_now else R.string.timetable_next, "$subject ($room)"),
-            nextSubject?.let { context.getString(R.string.timetable_later, "$nextSubject ($nextRoom)") }
+            nextSubject?.let { context.getString(R.string.timetable_later, "$nextSubject ($nextRoom)") },
+            studentName
         )
     }
 
-    private fun showNotification(context: Context, type: Int, countDown: Long, title: String, next: String?) {
+    private fun showNotification(context: Context, type: Int, countDown: Long, title: String, next: String?, studentName: String?) {
         NotificationManagerCompat.from(context).notify(type, NotificationCompat.Builder(context, UpcomingLessonsChannel.CHANNEL_ID)
             .setContentTitle(title)
             .setContentText(next)
@@ -65,6 +70,10 @@ class AlarmBroadcastReceiver : BroadcastReceiver() {
             .setUsesChronometer(true)
             .setSmallIcon(R.drawable.ic_main_timetable)
             .setColor(context.getCompatColor(R.color.colorPrimary))
+            .setStyle(NotificationCompat.InboxStyle().also {
+                it.setSummaryText(studentName)
+                it.addLine(next)
+            })
             .setContentIntent(PendingIntent.getActivity(context, MainView.Section.TIMETABLE.id,
                 MainActivity.getStartIntent(context, MainView.Section.TIMETABLE, true), PendingIntent.FLAG_UPDATE_CURRENT))
             .build()

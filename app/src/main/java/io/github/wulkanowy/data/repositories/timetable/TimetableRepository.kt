@@ -3,6 +3,7 @@ package io.github.wulkanowy.data.repositories.timetable
 import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
 import com.github.pwittchen.reactivenetwork.library.rx2.internet.observing.InternetObservingSettings
 import io.github.wulkanowy.data.db.entities.Semester
+import io.github.wulkanowy.data.db.entities.Student
 import io.github.wulkanowy.data.db.entities.Timetable
 import io.github.wulkanowy.services.alarm.AlarmHelper
 import io.github.wulkanowy.utils.friday
@@ -22,7 +23,7 @@ class TimetableRepository @Inject constructor(
     private val alarmHelper: AlarmHelper
 ) {
 
-    fun getTimetable(semester: Semester, start: LocalDate, end: LocalDate, forceRefresh: Boolean = false): Single<List<Timetable>> {
+    fun getTimetable(student: Student, semester: Semester, start: LocalDate, end: LocalDate, forceRefresh: Boolean = false): Single<List<Timetable>> {
         return Single.fromCallable { start.monday to end.friday }.flatMap { (monday, friday) ->
             local.getTimetable(semester, monday, friday).filter { !forceRefresh }
                 .switchIfEmpty(ReactiveNetwork.checkInternetConnectivity(settings).flatMap {
@@ -33,7 +34,7 @@ class TimetableRepository @Inject constructor(
                         .toSingle(emptyList())
                         .doOnSuccess { old ->
                             local.deleteTimetable(old.uniqueSubtract(new).also { alarmHelper.cancelNotifications(it) })
-                            local.saveTimetable(new.uniqueSubtract(old).also { alarmHelper.scheduleNotifications(it) }.map { item ->
+                            local.saveTimetable(new.uniqueSubtract(old).also { alarmHelper.scheduleNotifications(it, student) }.map { item ->
                                 item.also { new ->
                                     old.singleOrNull { new.start == it.start }?.let { old ->
                                         return@map new.copy(
@@ -46,7 +47,7 @@ class TimetableRepository @Inject constructor(
                         }
                 }.flatMap {
                     local.getTimetable(semester, monday, friday).toSingle(emptyList())
-                }).map { list -> list.filter { it.date in start..end }.also { alarmHelper.scheduleNotifications(it) } } // remove this maybe
+                }).map { list -> list.filter { it.date in start..end }.also { alarmHelper.scheduleNotifications(it, student) } } // remove this maybe
         }
     }
 }
