@@ -8,6 +8,7 @@ import androidx.test.filters.SdkSuppress
 import com.github.pwittchen.reactivenetwork.library.rx2.internet.observing.InternetObservingSettings
 import io.github.wulkanowy.data.db.AppDatabase
 import io.github.wulkanowy.data.db.entities.Semester
+import io.github.wulkanowy.data.db.entities.Student
 import io.github.wulkanowy.data.repositories.TestInternetObservingStrategy
 import io.github.wulkanowy.services.alarm.AlarmHelper
 import io.github.wulkanowy.sdk.Sdk
@@ -37,6 +38,9 @@ class TimetableRepositoryTest {
         .build()
 
     @MockK
+    private lateinit var studentMock: Student
+
+    @MockK
     private lateinit var semesterMock: Semester
 
     @MockK
@@ -57,10 +61,15 @@ class TimetableRepositoryTest {
 
         every { alarmHelper.scheduleNotifications(any(), any()) } returns mockk()
         every { alarmHelper.cancelNotifications(any(), any()) } returns mockk()
+
+        every { studentMock.studentId } returns 1
+        every { studentMock.studentName } returns "Jan Kowalski"
+
         every { semesterMock.studentId } returns 1
         every { semesterMock.diaryId } returns 2
         every { semesterMock.schoolYear } returns 2019
         every { semesterMock.semesterId } returns 1
+
         every { mockSdk.switchDiary(any(), any()) } returns mockSdk
     }
 
@@ -86,7 +95,7 @@ class TimetableRepositoryTest {
         ))
 
         val lessons = TimetableRepository(settings, timetableLocal, timetableRemote, alarmHelper)
-            .getTimetable(semesterMock, LocalDate.of(2019, 3, 5), LocalDate.of(2019, 3, 5), true)
+            .getTimetable(studentMock, semesterMock, LocalDate.of(2019, 3, 5), LocalDate.of(2019, 3, 5), true)
             .blockingGet()
 
         assertEquals(4, lessons.size)
@@ -132,7 +141,7 @@ class TimetableRepositoryTest {
         ))
 
         val lessons = TimetableRepository(settings, timetableLocal, timetableRemote, alarmHelper)
-            .getTimetable(semesterMock, LocalDate.of(2019, 12, 23), LocalDate.of(2019, 12, 25), true)
+            .getTimetable(studentMock, semesterMock, LocalDate.of(2019, 12, 23), LocalDate.of(2019, 12, 25), true)
             .blockingGet()
 
         assertEquals(12, lessons.size)

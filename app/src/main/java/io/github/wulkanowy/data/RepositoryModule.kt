@@ -3,6 +3,7 @@ package io.github.wulkanowy.data
 import android.app.AlarmManager
 import android.content.Context
 import android.content.SharedPreferences
+import android.content.res.AssetManager
 import android.content.res.Resources
 import androidx.core.content.getSystemService
 import androidx.preference.PreferenceManager
@@ -59,6 +60,10 @@ internal class RepositoryModule {
     @Singleton
     @Provides
     fun provideResources(context: Context): Resources = context.resources
+
+    @Singleton
+    @Provides
+    fun provideAssets(context: Context): AssetManager = context.assets
 
     @Singleton
     @Provides
