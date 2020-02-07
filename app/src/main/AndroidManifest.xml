@@ -90,7 +90,7 @@
                 android:resource="@xml/provider_widget_lucky_number" />
         </receiver>
 
-        <receiver android:name=".services.alarm.AlarmBroadcastReceiver" />
+        <receiver android:name=".services.alarm.TimetableNotificationBroadcastReceiver" />
 
         <provider
             android:name="androidx.work.impl.WorkManagerInitializer"

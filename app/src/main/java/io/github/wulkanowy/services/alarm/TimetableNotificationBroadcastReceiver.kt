@@ -13,7 +13,7 @@ import io.github.wulkanowy.ui.modules.main.MainView
 import io.github.wulkanowy.utils.getCompatColor
 import timber.log.Timber
 
-class AlarmBroadcastReceiver : BroadcastReceiver() {
+class TimetableNotificationBroadcastReceiver : BroadcastReceiver() {
 
     companion object {
         const val STUDENT_NAME = "student_name"
