@@ -35,10 +35,13 @@ class TimetableNotificationSchedulerHelper @Inject constructor(
 
     private fun getRequestCode(time: LocalDateTime, studentId: Int) = (time.toTimestamp() * studentId).toInt()
 
+    private fun getUpcomingLessonTime(index: Int, day: List<Timetable>, lesson: Timetable): LocalDateTime {
+        return day.getOrNull(index - 1)?.end ?: lesson.start.minusMinutes(30)
+    }
+
     fun cancelNotifications(lessons: List<Timetable>, studentId: Int = 1) {
         lessons.sortedBy { it.start }.forEachIndexed { index, lesson ->
-            val upcomingTimestamp = lessons.getOrNull(index - 1)?.end ?: lesson.start.minusMinutes(30)
-            alarmManager.cancel(PendingIntent.getBroadcast(context, getRequestCode(upcomingTimestamp, studentId), Intent(), FLAG_CANCEL_CURRENT))
+            alarmManager.cancel(PendingIntent.getBroadcast(context, getRequestCode(getUpcomingLessonTime(index, lessons, lesson), studentId), Intent(), FLAG_CANCEL_CURRENT))
             alarmManager.cancel(PendingIntent.getBroadcast(context, getRequestCode(lesson.start, studentId), Intent(), FLAG_CANCEL_CURRENT))
         }
         Timber.d("Timetable notifications canceled")
@@ -55,7 +58,7 @@ class TimetableNotificationSchedulerHelper @Inject constructor(
                     val intent = createIntent(student, lesson, day.getOrNull(index + 1))
 
                     if (lesson.start > now()) {
-                        scheduleBroadcast(intent, student.studentId, NOTIFICATION_TYPE_UPCOMING, day.getOrNull(index - 1)?.end ?: lesson.start.minusMinutes(30))
+                        scheduleBroadcast(intent, student.studentId, NOTIFICATION_TYPE_UPCOMING, getUpcomingLessonTime(index, day, lesson))
                     }
 
                     if (lesson.end > now()) {
