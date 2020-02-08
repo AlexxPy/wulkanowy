@@ -1,13 +1,14 @@
 package io.github.wulkanowy.services.alarm
 
 import android.app.PendingIntent
+import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import io.github.wulkanowy.R
-import io.github.wulkanowy.services.sync.channels.UpcomingLessonsChannel
+import io.github.wulkanowy.services.sync.channels.UpcomingLessonsChannel.Companion.CHANNEL_ID
 import io.github.wulkanowy.ui.modules.main.MainActivity
 import io.github.wulkanowy.ui.modules.main.MainView
 import io.github.wulkanowy.utils.getCompatColor
@@ -33,8 +34,8 @@ class TimetableNotificationBroadcastReceiver : BroadcastReceiver() {
         const val LESSON_END = "end_timestamp"
     }
 
-    override fun onReceive(context: Context, intent: Intent?) {
-        val type = intent!!.getIntExtra(LESSON_TYPE, 0)
+    override fun onReceive(context: Context, intent: Intent) {
+        val type = intent.getIntExtra(LESSON_TYPE, 0)
 
         NotificationManagerCompat.from(context).cancelAll()
         if (type == NOTIFICATION_TYPE_LAST_LESSON_CANCELLATION) return
@@ -61,7 +62,7 @@ class TimetableNotificationBroadcastReceiver : BroadcastReceiver() {
     }
 
     private fun showNotification(context: Context, type: Int, countDown: Long, title: String, next: String?, studentName: String?) {
-        NotificationManagerCompat.from(context).notify(type, NotificationCompat.Builder(context, UpcomingLessonsChannel.CHANNEL_ID)
+        NotificationManagerCompat.from(context).notify(type, NotificationCompat.Builder(context, CHANNEL_ID)
             .setContentTitle(title)
             .setContentText(next)
             .setAutoCancel(false)
@@ -75,7 +76,7 @@ class TimetableNotificationBroadcastReceiver : BroadcastReceiver() {
                 it.addLine(next)
             })
             .setContentIntent(PendingIntent.getActivity(context, MainView.Section.TIMETABLE.id,
-                MainActivity.getStartIntent(context, MainView.Section.TIMETABLE, true), PendingIntent.FLAG_UPDATE_CURRENT))
+                MainActivity.getStartIntent(context, MainView.Section.TIMETABLE, true), FLAG_UPDATE_CURRENT))
             .build()
         )
     }
