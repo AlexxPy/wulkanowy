@@ -1,7 +1,9 @@
 package io.github.wulkanowy.services.alarm
 
 import android.app.AlarmManager
+import android.app.AlarmManager.RTC_WAKEUP
 import android.app.PendingIntent
+import android.app.PendingIntent.FLAG_CANCEL_CURRENT
 import android.content.Context
 import android.content.Intent
 import androidx.core.app.AlarmManagerCompat
@@ -19,8 +21,8 @@ import io.github.wulkanowy.services.alarm.TimetableNotificationBroadcastReceiver
 import io.github.wulkanowy.services.alarm.TimetableNotificationBroadcastReceiver.Companion.NOTIFICATION_TYPE_LAST_LESSON_CANCELLATION
 import io.github.wulkanowy.services.alarm.TimetableNotificationBroadcastReceiver.Companion.NOTIFICATION_TYPE_UPCOMING
 import io.github.wulkanowy.services.alarm.TimetableNotificationBroadcastReceiver.Companion.STUDENT_NAME
-import io.github.wulkanowy.utils.toLocalDateTime
 import io.github.wulkanowy.utils.toTimestamp
+import org.threeten.bp.LocalDateTime
 import org.threeten.bp.LocalDateTime.now
 import timber.log.Timber
 import javax.inject.Inject
@@ -35,8 +37,8 @@ class TimetableNotificationSchedulerHelper @Inject constructor(
         lessons.sortedBy { it.start }.forEachIndexed { index, lesson ->
             val upcomingTimestamp = lessons.getOrNull(index - 1)?.end?.toTimestamp() ?: lesson.start.minusMinutes(30).toTimestamp()
             val currentTimestamp = lesson.start.toTimestamp()
-            alarmManager.cancel(PendingIntent.getBroadcast(context, (upcomingTimestamp * studentId).toInt(), Intent(), PendingIntent.FLAG_CANCEL_CURRENT))
-            alarmManager.cancel(PendingIntent.getBroadcast(context, (currentTimestamp * studentId).toInt(), Intent(), PendingIntent.FLAG_CANCEL_CURRENT))
+            alarmManager.cancel(PendingIntent.getBroadcast(context, (upcomingTimestamp * studentId).toInt(), Intent(), FLAG_CANCEL_CURRENT))
+            alarmManager.cancel(PendingIntent.getBroadcast(context, (currentTimestamp * studentId).toInt(), Intent(), FLAG_CANCEL_CURRENT))
         }
         Timber.d("Timetable notifications canceled")
     }
@@ -44,63 +46,47 @@ class TimetableNotificationSchedulerHelper @Inject constructor(
     fun scheduleNotifications(lessons: List<Timetable>, student: Student) {
         if (!preferencesRepository.isUpcomingLessonsNotificationsEnable) return cancelNotifications(lessons, student.studentId)
 
-        Timber.d("${lessons.size} to schedule, current millis: ${now().toTimestamp()}")
-        lessons.groupBy { it.date }.map { week -> week.value.sortedBy { it.date } }.map { it.filter { lesson -> !lesson.canceled } }.map { day ->
-            val numberOfLessons = day.size
-            day.forEachIndexed { index, lesson ->
-                val intent = with(Intent(context, TimetableNotificationBroadcastReceiver::class.java)) {
-                    putExtra(STUDENT_NAME, student.studentName)
-                    putExtra(LESSON_ROOM, lesson.room)
-                    putExtra(LESSON_START, lesson.start.toTimestamp())
-                    putExtra(LESSON_END, lesson.end.toTimestamp())
-                    putExtra(LESSON_TITLE, lesson.subject)
-                    putExtra(LESSON_NEXT_TITLE, day.getOrNull(index + 1)?.subject)
-                    putExtra(LESSON_NEXT_ROOM, day.getOrNull(index + 1)?.room)
-                }
+        lessons.groupBy { it.date }
+            .map { it.value.sortedBy { lesson -> lesson.date } }
+            .map { it.filter { lesson -> !lesson.canceled } }
+            .map { day ->
+                day.forEachIndexed { index, lesson ->
+                    val intent = createIntent(student, lesson, day.getOrNull(index + 1))
 
-                scheduleUpcoming(lesson, day.getOrNull(index - 1), intent, student.studentId)
-                scheduleCurrent(lesson, intent, student.studentId)
-                if (numberOfLessons - 1 == index) scheduleLastLessonCancellation(lesson, intent, student.studentId)
+                    if (lesson.start > now()) {
+                        scheduleBroadcast(intent, student.studentId, NOTIFICATION_TYPE_UPCOMING, day.getOrNull(index - 1)?.end ?: lesson.start.minusMinutes(30))
+                    }
+
+                    if (lesson.end > now()) {
+                        scheduleBroadcast(intent, student.studentId, NOTIFICATION_TYPE_CURRENT, lesson.start)
+                        if (day.lastIndex == index) scheduleBroadcast(intent, student.studentId, NOTIFICATION_TYPE_LAST_LESSON_CANCELLATION, lesson.end)
+                    }
+                }
             }
-        }
 
         Timber.d("Timetable notifications scheduled")
 
-        val canceledLessons = lessons.filter { it.canceled }
-        Timber.d("${canceledLessons.size} to de-schedule")
-        cancelNotifications(canceledLessons, student.studentId)
+//        cancelNotifications(lessons.filter { it.canceled }, student.studentId)
     }
 
-    private fun scheduleUpcoming(lesson: Timetable, previous: Timetable?, intent: Intent, studentId: Int) {
-        if (lesson.start >= now()) {
-            Timber.d("${lesson.start} >= ${now()}")
-            val upcomingTimestamp = previous?.end?.toTimestamp() ?: lesson.start.minusMinutes(30).toTimestamp()
-            AlarmManagerCompat.setExactAndAllowWhileIdle(alarmManager, AlarmManager.RTC_WAKEUP, upcomingTimestamp,
-                PendingIntent.getBroadcast(context, (upcomingTimestamp * studentId).toInt(), intent.also { it.putExtra(LESSON_TYPE, NOTIFICATION_TYPE_UPCOMING) }, PendingIntent.FLAG_CANCEL_CURRENT)
-            )
-            Timber.d("- scheduleUpcoming(): scheduled at ${upcomingTimestamp.toLocalDateTime()} (${previous?.end ?: lesson.start.minusMinutes(30)}) $lesson")
-        } else Timber.d("- scheduleUpcoming(): not scheduled")
+    private fun createIntent(student: Student, lesson: Timetable, nextLesson: Timetable?): Intent {
+        return Intent(context, TimetableNotificationBroadcastReceiver::class.java).apply {
+            putExtra(STUDENT_NAME, student.studentName)
+            putExtra(LESSON_ROOM, lesson.room)
+            putExtra(LESSON_START, lesson.start.toTimestamp())
+            putExtra(LESSON_END, lesson.end.toTimestamp())
+            putExtra(LESSON_TITLE, lesson.subject)
+            putExtra(LESSON_NEXT_TITLE, nextLesson?.subject)
+            putExtra(LESSON_NEXT_ROOM, nextLesson?.room)
+        }
     }
 
-    private fun scheduleCurrent(lesson: Timetable, intent: Intent, studentId: Int) {
-        if (lesson.end > now()) {
-            Timber.d("${lesson.end} > ${now()}")
-            val currentTimestamp = lesson.start.toTimestamp()
-            AlarmManagerCompat.setExactAndAllowWhileIdle(alarmManager, AlarmManager.RTC_WAKEUP, currentTimestamp,
-                PendingIntent.getBroadcast(context, (currentTimestamp * studentId).toInt(), intent.also { it.putExtra(LESSON_TYPE, NOTIFICATION_TYPE_CURRENT) }, PendingIntent.FLAG_CANCEL_CURRENT)
-            )
-            Timber.d("- scheduleCurrent(): scheduled at ${currentTimestamp.toLocalDateTime()} (${lesson.start}) $lesson")
-        } else Timber.d("- scheduleCurrent(): not scheduled")
-    }
-
-    private fun scheduleLastLessonCancellation(lesson: Timetable, intent: Intent, studentId: Int) {
-        if (lesson.end > now()) {
-            Timber.d("${lesson.end} > ${now()}")
-            val endTimestamp = lesson.end.toTimestamp()
-            AlarmManagerCompat.setExactAndAllowWhileIdle(alarmManager, AlarmManager.RTC_WAKEUP, endTimestamp,
-                PendingIntent.getBroadcast(context, (endTimestamp * studentId).toInt(), intent.also { it.putExtra(LESSON_TYPE, NOTIFICATION_TYPE_LAST_LESSON_CANCELLATION) }, PendingIntent.FLAG_CANCEL_CURRENT)
-            )
-            Timber.d("- scheduleLastLessonCancellation(): scheduled at ${endTimestamp.toLocalDateTime()} (${lesson.end}) $lesson")
-        } else Timber.d("- scheduleLastLessonCancellation(): not scheduled")
+    private fun scheduleBroadcast(intent: Intent, studentId: Int, notificationType: Int, time: LocalDateTime) {
+        AlarmManagerCompat.setExactAndAllowWhileIdle(alarmManager, RTC_WAKEUP, time.toTimestamp(),
+            PendingIntent.getBroadcast(context, (time.toTimestamp() * studentId).toInt(), intent.also {
+                it.putExtra(LESSON_TYPE, notificationType)
+            }, FLAG_CANCEL_CURRENT)
+        )
+        Timber.d("Timetable notification from studentId: $studentId, with notification type: $notificationType scheduled at $time")
     }
 }
