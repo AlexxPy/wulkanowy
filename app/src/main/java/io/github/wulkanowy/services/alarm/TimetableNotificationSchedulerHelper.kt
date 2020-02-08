@@ -33,12 +33,13 @@ class TimetableNotificationSchedulerHelper @Inject constructor(
     private val preferencesRepository: PreferencesRepository
 ) {
 
+    private fun getRequestCode(time: LocalDateTime, studentId: Int) = (time.toTimestamp() * studentId).toInt()
+
     fun cancelNotifications(lessons: List<Timetable>, studentId: Int = 1) {
         lessons.sortedBy { it.start }.forEachIndexed { index, lesson ->
-            val upcomingTimestamp = lessons.getOrNull(index - 1)?.end?.toTimestamp() ?: lesson.start.minusMinutes(30).toTimestamp()
-            val currentTimestamp = lesson.start.toTimestamp()
-            alarmManager.cancel(PendingIntent.getBroadcast(context, (upcomingTimestamp * studentId).toInt(), Intent(), FLAG_CANCEL_CURRENT))
-            alarmManager.cancel(PendingIntent.getBroadcast(context, (currentTimestamp * studentId).toInt(), Intent(), FLAG_CANCEL_CURRENT))
+            val upcomingTimestamp = lessons.getOrNull(index - 1)?.end ?: lesson.start.minusMinutes(30)
+            alarmManager.cancel(PendingIntent.getBroadcast(context, getRequestCode(upcomingTimestamp, studentId), Intent(), FLAG_CANCEL_CURRENT))
+            alarmManager.cancel(PendingIntent.getBroadcast(context, getRequestCode(lesson.start, studentId), Intent(), FLAG_CANCEL_CURRENT))
         }
         Timber.d("Timetable notifications canceled")
     }
@@ -83,7 +84,7 @@ class TimetableNotificationSchedulerHelper @Inject constructor(
 
     private fun scheduleBroadcast(intent: Intent, studentId: Int, notificationType: Int, time: LocalDateTime) {
         AlarmManagerCompat.setExactAndAllowWhileIdle(alarmManager, RTC_WAKEUP, time.toTimestamp(),
-            PendingIntent.getBroadcast(context, (time.toTimestamp() * studentId).toInt(), intent.also {
+            PendingIntent.getBroadcast(context, getRequestCode(time, studentId), intent.also {
                 it.putExtra(LESSON_TYPE, notificationType)
             }, FLAG_CANCEL_CURRENT)
         )
