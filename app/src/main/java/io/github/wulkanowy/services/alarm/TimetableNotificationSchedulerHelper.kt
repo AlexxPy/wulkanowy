@@ -44,7 +44,7 @@ class TimetableNotificationSchedulerHelper @Inject constructor(
             alarmManager.cancel(PendingIntent.getBroadcast(context, getRequestCode(getUpcomingLessonTime(index, lessons, lesson), studentId), Intent(), FLAG_CANCEL_CURRENT))
             alarmManager.cancel(PendingIntent.getBroadcast(context, getRequestCode(lesson.start, studentId), Intent(), FLAG_CANCEL_CURRENT))
         }
-        Timber.d("Timetable notifications canceled")
+        Timber.d("Timetable notifications (${lessons.size}) canceled")
     }
 
     fun scheduleNotifications(lessons: List<Timetable>, student: Student) {
@@ -68,7 +68,7 @@ class TimetableNotificationSchedulerHelper @Inject constructor(
                 }
             }
 
-        Timber.d("Timetable notifications scheduled")
+        Timber.d("Timetable notifications (~${lessons.size}) scheduled")
 
 //        cancelNotifications(lessons.filter { it.canceled }, student.studentId)
     }
