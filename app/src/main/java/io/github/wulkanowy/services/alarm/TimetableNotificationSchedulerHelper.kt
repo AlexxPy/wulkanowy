@@ -47,7 +47,7 @@ class TimetableNotificationSchedulerHelper @Inject constructor(
         if (!preferencesRepository.isUpcomingLessonsNotificationsEnable) return cancelNotifications(lessons, student.studentId)
 
         lessons.groupBy { it.date }
-            .map { it.value.sortedBy { lesson -> lesson.date } }
+            .map { it.value.sortedBy { lesson -> lesson.start } }
             .map { it.filter { lesson -> !lesson.canceled } }
             .map { day ->
                 day.forEachIndexed { index, lesson ->
