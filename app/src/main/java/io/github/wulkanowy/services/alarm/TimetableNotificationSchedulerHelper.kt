@@ -52,7 +52,7 @@ class TimetableNotificationSchedulerHelper @Inject constructor(
 
         lessons.groupBy { it.date }
             .map { it.value.sortedBy { lesson -> lesson.start } }
-            .map { it.filter { lesson -> !lesson.canceled } }
+            .map { it.filter { lesson -> !lesson.canceled && lesson.studentPlan } }
             .map { day ->
                 day.forEachIndexed { index, lesson ->
                     val intent = createIntent(student, lesson, day.getOrNull(index + 1))
