@@ -24,7 +24,8 @@
     <!--Login-->
     <string name="login_header_default">Sign in with the student or parent account</string>
     <string name="login_header_symbol">Enter the symbol</string>
-    <string name="login_nickname_hint">Email or nick</string>
+    <string name="login_nickname_hint">Username</string>
+    <string name="login_email_hint">Email</string>
     <string name="login_password_hint">Password</string>
     <string name="login_host_hint">Register</string>
     <string name="login_type_api">Mobile API</string>
@@ -54,6 +55,7 @@
     <string name="login_email_intent_title">Send email</string>
     <string name="login_email_subject" translatable="false">Zgłoszenie: Problemy z logowaniem</string>
     <string name="login_email_text" translatable="false">Informacje o aplikacji:\n\nUrządzenie: %1$s\nWersja SDK: %2$s\nWersja aplikacji: %3$s\n\nOpis problemu:</string>
+    <string name="login_signed_in">Student is already signed in</string>
 
 
     <!--Main-->
@@ -148,6 +150,7 @@
 
     <!--Attendance summary-->
     <string name="attendance_summary_final">Attendance</string>
+    <string name="attendance_summary_total">Total</string>
 
 
     <!--Exam-->
