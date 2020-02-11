@@ -69,8 +69,6 @@ class TimetableNotificationSchedulerHelper @Inject constructor(
             }
 
         Timber.d("Timetable notifications (~${lessons.size}) scheduled")
-
-//        cancelNotifications(lessons.filter { it.canceled }, student.studentId)
     }
 
     private fun createIntent(student: Student, lesson: Timetable, nextLesson: Timetable?): Intent {
