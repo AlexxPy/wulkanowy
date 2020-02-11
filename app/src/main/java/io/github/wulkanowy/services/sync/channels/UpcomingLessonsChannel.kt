@@ -24,6 +24,7 @@ class UpcomingLessonsChannel @Inject constructor(
             NotificationChannel(CHANNEL_ID, context.getString(R.string.channel_upcoming_lessons), IMPORTANCE_DEFAULT).apply {
                 lockscreenVisibility = VISIBILITY_PUBLIC
                 setShowBadge(false)
+                enableVibration(false)
             }
         )
     }
