@@ -33,7 +33,7 @@ class TimetableRepository @Inject constructor(
                     local.getTimetable(semester, monday, friday)
                         .toSingle(emptyList())
                         .doOnSuccess { old ->
-                            local.deleteTimetable(old.uniqueSubtract(new).also { schedulerHelper.cancelNotifications(it) })
+                            local.deleteTimetable(old.uniqueSubtract(new).also { schedulerHelper.cancelScheduled(it) })
                             local.saveTimetable(new.uniqueSubtract(old).also { schedulerHelper.scheduleNotifications(it, student) }.map { item ->
                                 item.also { new ->
                                     old.singleOrNull { new.start == it.start }?.let { old ->

@@ -7,6 +7,7 @@ import android.app.PendingIntent.FLAG_CANCEL_CURRENT
 import android.content.Context
 import android.content.Intent
 import androidx.core.app.AlarmManagerCompat
+import androidx.core.app.NotificationManagerCompat
 import io.github.wulkanowy.data.db.entities.Student
 import io.github.wulkanowy.data.db.entities.Timetable
 import io.github.wulkanowy.data.repositories.preferences.PreferencesRepository
@@ -41,17 +42,24 @@ class TimetableNotificationSchedulerHelper @Inject constructor(
         return day.getOrNull(index - 1)?.end ?: lesson.start.minusMinutes(30)
     }
 
-    fun cancelNotifications(lessons: List<Timetable>, studentId: Int = 1) {
+    fun cancelScheduled(lessons: List<Timetable>, studentId: Int = 1) {
         lessons.sortedBy { it.start }.forEachIndexed { index, lesson ->
-//            NotificationManagerCompat.from(context).cancel(MainView.Section.TIMETABLE.id + studentId)
-            alarmManager.cancel(PendingIntent.getBroadcast(context, getRequestCode(getUpcomingLessonTime(index, lessons, lesson), studentId), Intent(), FLAG_CANCEL_CURRENT))
-            alarmManager.cancel(PendingIntent.getBroadcast(context, getRequestCode(lesson.start, studentId), Intent(), FLAG_CANCEL_CURRENT))
+            val upcomingTime = getUpcomingLessonTime(index, lessons, lesson)
+            cancelScheduledTo(upcomingTime..lesson.start, getRequestCode(upcomingTime, studentId))
+            cancelScheduledTo(lesson.start..lesson.end, getRequestCode(lesson.start, studentId))
         }
         Timber.d("Timetable notifications (${lessons.size}) canceled")
     }
 
+    private fun cancelScheduledTo(range: ClosedRange<LocalDateTime>, requestCode: Int) {
+        if (now() in range) cancelNotification()
+        alarmManager.cancel(PendingIntent.getBroadcast(context, requestCode, Intent(), FLAG_CANCEL_CURRENT))
+    }
+
+    fun cancelNotification() = NotificationManagerCompat.from(context).cancel(MainView.Section.TIMETABLE.id)
+
     fun scheduleNotifications(lessons: List<Timetable>, student: Student) {
-        if (!preferencesRepository.isUpcomingLessonsNotificationsEnable) return cancelNotifications(lessons, student.studentId)
+        if (!preferencesRepository.isUpcomingLessonsNotificationsEnable) return cancelScheduled(lessons, student.studentId)
 
         lessons.groupBy { it.date }
             .map { it.value.sortedBy { lesson -> lesson.start } }
@@ -89,7 +97,7 @@ class TimetableNotificationSchedulerHelper @Inject constructor(
     private fun scheduleBroadcast(intent: Intent, studentId: Int, notificationType: Int, time: LocalDateTime) {
         AlarmManagerCompat.setExactAndAllowWhileIdle(alarmManager, RTC_WAKEUP, time.toTimestamp(),
             PendingIntent.getBroadcast(context, getRequestCode(time, studentId), intent.also {
-                it.putExtra(NOTIFICATION_ID, MainView.Section.TIMETABLE.id + studentId)
+                it.putExtra(NOTIFICATION_ID, MainView.Section.TIMETABLE.id/* + studentId*/)
                 it.putExtra(LESSON_TYPE, notificationType)
             }, FLAG_CANCEL_CURRENT)
         )

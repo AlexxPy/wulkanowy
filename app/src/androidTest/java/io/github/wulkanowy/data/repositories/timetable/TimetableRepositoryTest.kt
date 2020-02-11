@@ -59,7 +59,7 @@ class TimetableRepositoryTest {
         timetableRemote = TimetableRemote(mockSdk)
 
         every { timetableNotificationSchedulerHelper.scheduleNotifications(any(), any()) } returns mockk()
-        every { timetableNotificationSchedulerHelper.cancelNotifications(any(), any()) } returns mockk()
+        every { timetableNotificationSchedulerHelper.cancelScheduled(any(), any()) } returns mockk()
 
         every { studentMock.studentId } returns 1
         every { studentMock.studentName } returns "Jan Kowalski"

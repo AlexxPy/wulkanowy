@@ -3,6 +3,7 @@ package io.github.wulkanowy.ui.modules.settings
 import com.readystatesoftware.chuck.api.ChuckCollector
 import io.github.wulkanowy.data.repositories.preferences.PreferencesRepository
 import io.github.wulkanowy.data.repositories.student.StudentRepository
+import io.github.wulkanowy.services.alarm.TimetableNotificationSchedulerHelper
 import io.github.wulkanowy.services.sync.SyncManager
 import io.github.wulkanowy.ui.base.BasePresenter
 import io.github.wulkanowy.ui.base.ErrorHandler
@@ -19,6 +20,7 @@ class SettingsPresenter @Inject constructor(
     errorHandler: ErrorHandler,
     studentRepository: StudentRepository,
     private val preferencesRepository: PreferencesRepository,
+    private val timetableNotificationHelper: TimetableNotificationSchedulerHelper,
     private val analytics: FirebaseAnalyticsHelper,
     private val syncManager: SyncManager,
     private val chuckCollector: ChuckCollector,
@@ -34,17 +36,17 @@ class SettingsPresenter @Inject constructor(
     fun onSharedPreferenceChanged(key: String) {
         Timber.i("Change settings $key")
 
-        with(preferencesRepository) {
+        preferencesRepository.apply {
             when (key) {
                 serviceEnableKey -> with(syncManager) { if (isServiceEnabled) startSyncWorker() else stopSyncWorker() }
                 servicesIntervalKey, servicesOnlyWifiKey -> syncManager.startSyncWorker(true)
                 isDebugNotificationEnableKey -> chuckCollector.showNotification(isDebugNotificationEnable)
                 appThemeKey -> view?.recreateView()
+                isUpcomingLessonsNotificationsEnableKey -> if (!isUpcomingLessonsNotificationsEnable) timetableNotificationHelper.cancelNotification()
                 appLanguageKey -> view?.run {
                     updateLanguage(if (appLanguage == "system") appInfo.systemLanguage else appLanguage)
                     recreateView()
                 }
-                else -> Unit
             }
         }
         analytics.logEvent("setting_changed", "name" to key)
