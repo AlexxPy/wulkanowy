@@ -35,10 +35,12 @@ class TimetableNotificationBroadcastReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         val type = intent.getIntExtra(LESSON_TYPE, 0)
-
-        if (type == NOTIFICATION_TYPE_LAST_LESSON_CANCELLATION) return
-
         val notificationId = intent.getIntExtra(NOTIFICATION_ID, MainView.Section.TIMETABLE.id)
+
+        if (type == NOTIFICATION_TYPE_LAST_LESSON_CANCELLATION) {
+            return NotificationManagerCompat.from(context).cancel(notificationId)
+        }
+
         val studentName = intent.getStringExtra(STUDENT_NAME)
 
         val subject = intent.getStringExtra(LESSON_TITLE)
@@ -50,7 +52,7 @@ class TimetableNotificationBroadcastReceiver : BroadcastReceiver() {
         val nextSubject = intent.getStringExtra(LESSON_NEXT_TITLE)
         val nextRoom = intent.getStringExtra(LESSON_NEXT_ROOM)
 
-        Timber.d("AlarmBroadcastReceiver receive intent: type: $type, subject: $subject, room: $room, start: $start")
+        Timber.d("TimetableNotificationBroadcastReceiver receive intent: type: $type, subject: $subject, room: $room, start: $start")
 
         showNotification(context, notificationId, studentName,
             if (type == NOTIFICATION_TYPE_CURRENT) end else start,
