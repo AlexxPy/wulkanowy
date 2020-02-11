@@ -17,19 +17,18 @@ import timber.log.Timber
 class TimetableNotificationBroadcastReceiver : BroadcastReceiver() {
 
     companion object {
-        const val STUDENT_NAME = "student_name"
-
-        const val LESSON_TYPE = "type"
         const val NOTIFICATION_TYPE_CURRENT = 1
         const val NOTIFICATION_TYPE_UPCOMING = 2
         const val NOTIFICATION_TYPE_LAST_LESSON_CANCELLATION = 3
 
+        const val NOTIFICATION_ID = "id"
+
+        const val STUDENT_NAME = "student_name"
+        const val LESSON_TYPE = "type"
         const val LESSON_TITLE = "title"
         const val LESSON_ROOM = "room"
-
         const val LESSON_NEXT_TITLE = "next_title"
         const val LESSON_NEXT_ROOM = "next_room"
-
         const val LESSON_START = "start_timestamp"
         const val LESSON_END = "end_timestamp"
     }
@@ -37,9 +36,9 @@ class TimetableNotificationBroadcastReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         val type = intent.getIntExtra(LESSON_TYPE, 0)
 
-        NotificationManagerCompat.from(context).cancelAll()
         if (type == NOTIFICATION_TYPE_LAST_LESSON_CANCELLATION) return
 
+        val notificationId = intent.getIntExtra(NOTIFICATION_ID, MainView.Section.TIMETABLE.id)
         val studentName = intent.getStringExtra(STUDENT_NAME)
 
         val subject = intent.getStringExtra(LESSON_TITLE)
@@ -53,16 +52,15 @@ class TimetableNotificationBroadcastReceiver : BroadcastReceiver() {
 
         Timber.d("AlarmBroadcastReceiver receive intent: type: $type, subject: $subject, room: $room, start: $start")
 
-        showNotification(context, type,
+        showNotification(context, notificationId, studentName,
             if (type == NOTIFICATION_TYPE_CURRENT) end else start,
             context.getString(if (type == NOTIFICATION_TYPE_CURRENT) R.string.timetable_now else R.string.timetable_next, "$subject ($room)".removeSuffix("()")),
-            nextSubject?.let { context.getString(R.string.timetable_later, "$nextSubject ($nextRoom)".removeSuffix("()")) },
-            studentName
+            nextSubject?.let { context.getString(R.string.timetable_later, "$nextSubject ($nextRoom)".removeSuffix("()")) }
         )
     }
 
-    private fun showNotification(context: Context, type: Int, countDown: Long, title: String, next: String?, studentName: String?) {
-        NotificationManagerCompat.from(context).notify(type, NotificationCompat.Builder(context, CHANNEL_ID)
+    private fun showNotification(context: Context, notificationId: Int, studentName: String?, countDown: Long, title: String, next: String?) {
+        NotificationManagerCompat.from(context).notify(notificationId, NotificationCompat.Builder(context, CHANNEL_ID)
             .setContentTitle(title)
             .setContentText(next)
             .setAutoCancel(false)

@@ -17,10 +17,12 @@ import io.github.wulkanowy.services.alarm.TimetableNotificationBroadcastReceiver
 import io.github.wulkanowy.services.alarm.TimetableNotificationBroadcastReceiver.Companion.LESSON_START
 import io.github.wulkanowy.services.alarm.TimetableNotificationBroadcastReceiver.Companion.LESSON_TITLE
 import io.github.wulkanowy.services.alarm.TimetableNotificationBroadcastReceiver.Companion.LESSON_TYPE
+import io.github.wulkanowy.services.alarm.TimetableNotificationBroadcastReceiver.Companion.NOTIFICATION_ID
 import io.github.wulkanowy.services.alarm.TimetableNotificationBroadcastReceiver.Companion.NOTIFICATION_TYPE_CURRENT
 import io.github.wulkanowy.services.alarm.TimetableNotificationBroadcastReceiver.Companion.NOTIFICATION_TYPE_LAST_LESSON_CANCELLATION
 import io.github.wulkanowy.services.alarm.TimetableNotificationBroadcastReceiver.Companion.NOTIFICATION_TYPE_UPCOMING
 import io.github.wulkanowy.services.alarm.TimetableNotificationBroadcastReceiver.Companion.STUDENT_NAME
+import io.github.wulkanowy.ui.modules.main.MainView
 import io.github.wulkanowy.utils.toTimestamp
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.LocalDateTime.now
@@ -41,6 +43,7 @@ class TimetableNotificationSchedulerHelper @Inject constructor(
 
     fun cancelNotifications(lessons: List<Timetable>, studentId: Int = 1) {
         lessons.sortedBy { it.start }.forEachIndexed { index, lesson ->
+//            NotificationManagerCompat.from(context).cancel(MainView.Section.TIMETABLE.id + studentId)
             alarmManager.cancel(PendingIntent.getBroadcast(context, getRequestCode(getUpcomingLessonTime(index, lessons, lesson), studentId), Intent(), FLAG_CANCEL_CURRENT))
             alarmManager.cancel(PendingIntent.getBroadcast(context, getRequestCode(lesson.start, studentId), Intent(), FLAG_CANCEL_CURRENT))
         }
@@ -86,6 +89,7 @@ class TimetableNotificationSchedulerHelper @Inject constructor(
     private fun scheduleBroadcast(intent: Intent, studentId: Int, notificationType: Int, time: LocalDateTime) {
         AlarmManagerCompat.setExactAndAllowWhileIdle(alarmManager, RTC_WAKEUP, time.toTimestamp(),
             PendingIntent.getBroadcast(context, getRequestCode(time, studentId), intent.also {
+                it.putExtra(NOTIFICATION_ID, MainView.Section.TIMETABLE.id + studentId)
                 it.putExtra(LESSON_TYPE, notificationType)
             }, FLAG_CANCEL_CURRENT)
         )
