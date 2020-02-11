@@ -1,9 +1,9 @@
 package io.github.wulkanowy.services.sync.channels
 
 import android.annotation.TargetApi
-import android.app.Notification
+import android.app.Notification.VISIBILITY_PUBLIC
 import android.app.NotificationChannel
-import android.app.NotificationManager
+import android.app.NotificationManager.IMPORTANCE_DEFAULT
 import android.content.Context
 import androidx.core.app.NotificationManagerCompat
 import io.github.wulkanowy.R
@@ -21,11 +21,9 @@ class UpcomingLessonsChannel @Inject constructor(
 
     fun create() {
         notificationManager.createNotificationChannel(
-            NotificationChannel(CHANNEL_ID, context.getString(R.string.channel_upcoming_lessons), NotificationManager.IMPORTANCE_HIGH)
-                .apply {
-                    enableLights(true)
-                    enableVibration(true)
-                    lockscreenVisibility = Notification.VISIBILITY_PUBLIC
-                })
+            NotificationChannel(CHANNEL_ID, context.getString(R.string.channel_upcoming_lessons), IMPORTANCE_DEFAULT).apply {
+                lockscreenVisibility = VISIBILITY_PUBLIC
+            }
+        )
     }
 }
