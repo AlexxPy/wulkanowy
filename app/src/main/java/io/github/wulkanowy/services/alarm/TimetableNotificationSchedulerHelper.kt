@@ -97,7 +97,7 @@ class TimetableNotificationSchedulerHelper @Inject constructor(
     private fun scheduleBroadcast(intent: Intent, studentId: Int, notificationType: Int, time: LocalDateTime) {
         AlarmManagerCompat.setExactAndAllowWhileIdle(alarmManager, RTC_WAKEUP, time.toTimestamp(),
             PendingIntent.getBroadcast(context, getRequestCode(time, studentId), intent.also {
-                it.putExtra(NOTIFICATION_ID, MainView.Section.TIMETABLE.id/* + studentId*/)
+                it.putExtra(NOTIFICATION_ID, MainView.Section.TIMETABLE.id)
                 it.putExtra(LESSON_TYPE, notificationType)
             }, FLAG_CANCEL_CURRENT)
         )
