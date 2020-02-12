@@ -15,3 +15,10 @@ class CrashlyticsTree : Timber.Tree() {
         // do nothing
     }
 }
+
+class CrashlyticsExceptionTree : Timber.Tree() {
+
+    override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
+        // to nothing
+    }
+}

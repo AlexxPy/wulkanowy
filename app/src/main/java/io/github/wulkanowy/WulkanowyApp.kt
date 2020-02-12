@@ -16,6 +16,7 @@ import io.github.wulkanowy.services.sync.SyncWorkerFactory
 import io.github.wulkanowy.ui.base.ThemeManager
 import io.github.wulkanowy.utils.ActivityLifecycleLogger
 import io.github.wulkanowy.utils.AppInfo
+import io.github.wulkanowy.utils.CrashlyticsExceptionTree
 import io.github.wulkanowy.utils.CrashlyticsTree
 import io.github.wulkanowy.utils.DebugLogTree
 import io.github.wulkanowy.utils.initCrashlytics
@@ -57,6 +58,7 @@ class WulkanowyApp : DaggerApplication(), Configuration.Provider {
             Timber.plant(DebugLogTree())
             FlexibleAdapter.enableLogs(Log.Level.DEBUG)
         } else {
+            Timber.plant(CrashlyticsExceptionTree())
             Timber.plant(CrashlyticsTree())
         }
         registerActivityLifecycleCallbacks(ActivityLifecycleLogger())
