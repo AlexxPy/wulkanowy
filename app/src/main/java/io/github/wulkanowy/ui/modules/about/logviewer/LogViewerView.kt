@@ -5,4 +5,6 @@ import io.github.wulkanowy.ui.base.BaseView
 interface LogViewerView : BaseView {
 
     fun initView()
+
+    fun setContent(content: String?)
 }

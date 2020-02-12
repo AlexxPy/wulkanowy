@@ -1,6 +1,7 @@
 package io.github.wulkanowy.ui.modules.about.logviewer
 
 import android.os.Bundle
+import android.text.method.ScrollingMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -32,7 +33,10 @@ class LogViewerFragment : BaseFragment(), LogViewerView, MainView.TitledView {
     }
 
     override fun initView() {
-        logViewContent.text = "todo"
+    }
+
+    override fun setContent(content: String?) {
+        logViewContent.text = content
     }
 
     override fun onDestroyView() {
