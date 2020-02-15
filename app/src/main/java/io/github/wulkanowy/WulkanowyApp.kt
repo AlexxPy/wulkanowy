@@ -60,7 +60,7 @@ class WulkanowyApp : DaggerApplication(), Configuration.Provider {
             FlexibleAdapter.enableLogs(Log.Level.DEBUG)
             Timber.plant(DebugLogTree())
             Timber.plant(FileLoggerTree.Builder()
-                .withFileName("log.%g.log")
+                .withFileName("wulkanowy.%g.log")
                 .withDirName(applicationContext.filesDir.absolutePath)
                 .withFileLimit(10)
                 .withMinPriority(DEBUG)

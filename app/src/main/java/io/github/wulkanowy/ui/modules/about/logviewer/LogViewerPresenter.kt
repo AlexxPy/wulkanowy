@@ -21,6 +21,20 @@ class LogViewerPresenter @Inject constructor(
         loadLogFile()
     }
 
+    fun onShareLogsSelected(): Boolean {
+        disposable.add(loggerRepository.getLogFiles()
+            .subscribeOn(schedulers.backgroundThread)
+            .observeOn(schedulers.mainThread)
+            .subscribe({
+                Timber.i("Loading logs files result: ${it?.joinToString { it.name }}")
+                view?.shareLogs(it!!)
+            }, {
+                Timber.i("Loading logs files result: An exception occurred")
+                errorHandler.dispatch(it)
+            }))
+        return true
+    }
+
     fun onRefreshClick() {
         loadLogFile()
     }
@@ -30,10 +44,10 @@ class LogViewerPresenter @Inject constructor(
             .subscribeOn(schedulers.backgroundThread)
             .observeOn(schedulers.mainThread)
             .subscribe({
-                Timber.i("Loading log file result: load ${it.size} lines")
+                Timber.i("Loading last log file result: load ${it.size} lines")
                 view?.setLines(it)
             }, {
-                Timber.i("Loading log file result: An exception occurred")
+                Timber.i("Loading last log file result: An exception occurred")
                 errorHandler.dispatch(it)
             }))
     }

@@ -289,6 +289,7 @@
     <string name="creator_see_more">See more on GitHub</string>
 
     <!--Log viewer-->
+    <string name="logviewer_share">Share logs</string>
     <string name="logviewer_refresh">Refresh</string>
 
 
