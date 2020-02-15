@@ -35,7 +35,7 @@ class LogViewerFragment : BaseFragment(), LogViewerView, MainView.TitledView {
         logViewRefreshButton.setOnClickListener { presenter.onRefreshClick() }
     }
 
-    override fun setContent(content: String?) {
+    override fun setContent(content: String) {
         logViewContent.text = content
     }
 
