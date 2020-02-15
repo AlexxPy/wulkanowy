@@ -1,7 +1,6 @@
 package io.github.wulkanowy.ui.modules.about.logviewer
 
 import android.os.Bundle
-import android.text.method.ScrollingMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,6 +32,7 @@ class LogViewerFragment : BaseFragment(), LogViewerView, MainView.TitledView {
     }
 
     override fun initView() {
+        logViewRefreshButton.setOnClickListener { presenter.onRefreshClick() }
     }
 
     override fun setContent(content: String?) {

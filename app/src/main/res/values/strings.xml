@@ -288,6 +288,9 @@
     <string name="creator_avatar_description">Avatar</string>
     <string name="creator_see_more">See more on GitHub</string>
 
+    <!--Log viewer-->
+    <string name="logviewer_refresh">Refresh</string>
+
 
     <!--Generic-->
     <string name="all_content">Content</string>

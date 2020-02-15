@@ -21,11 +21,16 @@ class LogViewerPresenter @Inject constructor(
         loadLogFile()
     }
 
+    fun onRefreshClick() {
+        loadLogFile()
+    }
+
     private fun loadLogFile() {
         disposable.add(loggerRepository.getLastLogContent()
             .subscribeOn(schedulers.backgroundThread)
             .observeOn(schedulers.mainThread)
             .subscribe({
+                Timber.i("Loading log file result: success")
                 view?.setContent(it)
             }, {
                 Timber.i("Loading log file result: An exception occurred")
