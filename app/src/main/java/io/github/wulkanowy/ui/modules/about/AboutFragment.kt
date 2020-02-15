@@ -112,7 +112,7 @@ class AboutFragment : BaseFragment(), AboutView, MainView.TitledView {
     }
 
     override fun openLogViewer() {
-        (activity as? MainActivity)?.pushView(LogViewerFragment.newInstance())
+        if (appInfo.isDebug) (activity as? MainActivity)?.pushView(LogViewerFragment.newInstance())
     }
 
     override fun openDiscordInvite() {
