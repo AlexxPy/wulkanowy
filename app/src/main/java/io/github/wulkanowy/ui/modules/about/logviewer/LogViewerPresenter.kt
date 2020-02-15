@@ -28,7 +28,8 @@ class LogViewerPresenter @Inject constructor(
             .subscribe({
                 view?.setContent(it)
             }, {
-                Timber.d(it)
+                Timber.i("Loading log file result: An exception occurred")
+                errorHandler.dispatch(it)
             }))
     }
 }
