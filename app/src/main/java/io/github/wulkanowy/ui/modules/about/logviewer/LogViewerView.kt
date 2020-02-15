@@ -6,5 +6,5 @@ interface LogViewerView : BaseView {
 
     fun initView()
 
-    fun setContent(content: String)
+    fun setLines(lines: List<String>)
 }

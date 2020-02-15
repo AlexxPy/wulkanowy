@@ -8,9 +8,12 @@ import javax.inject.Inject
 
 class LoggerRepository @Inject constructor(private val context: Context) {
 
-    fun getLastLogContent(): Single<String> {
+    fun getLastLogLines(): Single<List<String>> {
         return Single.fromCallable {
-            getLastModified(context.filesDir.absolutePath)?.readText(Charset.defaultCharset()).orEmpty()
+            getLastModified(context.filesDir.absolutePath)
+                ?.readText(Charset.defaultCharset())
+                .orEmpty()
+                .split("\n")
         }
     }
 
