@@ -24,15 +24,12 @@ class LoggerRepository @Inject constructor(private val context: Context) {
 
     private fun getLastModified(): Single<File> {
         return Single.fromCallable {
-            val files = File(context.filesDir.absolutePath).listFiles(File::isFile)
             var lastModifiedTime = Long.MIN_VALUE
             var chosenFile: File? = null
-            if (files != null) {
-                for (file in files) {
-                    if (file.lastModified() > lastModifiedTime) {
-                        chosenFile = file
-                        lastModifiedTime = file.lastModified()
-                    }
+            File(context.filesDir.absolutePath).listFiles(File::isFile)?.forEach { file ->
+                if (file.lastModified() > lastModifiedTime) {
+                    lastModifiedTime = file.lastModified()
+                    chosenFile = file
                 }
             }
             if (chosenFile == null) throw FileNotFoundException("Log file not found")
