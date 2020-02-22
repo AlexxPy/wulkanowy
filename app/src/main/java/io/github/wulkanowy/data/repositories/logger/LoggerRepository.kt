@@ -22,7 +22,7 @@ class LoggerRepository @Inject constructor(private val context: Context) {
         }
     }
 
-    private fun getLastModified(): Single<File?> {
+    private fun getLastModified(): Single<File> {
         return Single.fromCallable {
             val files = File(context.filesDir.absolutePath).listFiles(File::isFile)
             var lastModifiedTime = Long.MIN_VALUE

@@ -26,8 +26,8 @@ class LogViewerPresenter @Inject constructor(
             .subscribeOn(schedulers.backgroundThread)
             .observeOn(schedulers.mainThread)
             .subscribe({
-                Timber.i("Loading logs files result: ${it?.joinToString { it.name }}")
-                view?.shareLogs(it!!)
+                Timber.i("Loading logs files result: ${it.joinToString { it.name }}")
+                view?.shareLogs(it)
             }, {
                 Timber.i("Loading logs files result: An exception occurred")
                 errorHandler.dispatch(it)
