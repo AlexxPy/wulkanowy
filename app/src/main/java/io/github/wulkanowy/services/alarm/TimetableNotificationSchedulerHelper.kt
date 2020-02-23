@@ -47,8 +47,9 @@ class TimetableNotificationSchedulerHelper @Inject constructor(
             val upcomingTime = getUpcomingLessonTime(index, lessons, lesson)
             cancelScheduledTo(upcomingTime..lesson.start, getRequestCode(upcomingTime, studentId))
             cancelScheduledTo(lesson.start..lesson.end, getRequestCode(lesson.start, studentId))
+
+            Timber.d("Timetable notification for lesson started at ${lesson.start} canceled")
         }
-        Timber.d("Timetable notifications (${lessons.size}) canceled")
     }
 
     private fun cancelScheduledTo(range: ClosedRange<LocalDateTime>, requestCode: Int) {
@@ -63,7 +64,7 @@ class TimetableNotificationSchedulerHelper @Inject constructor(
 
         lessons.groupBy { it.date }
             .map { it.value.sortedBy { lesson -> lesson.start } }
-            .map { it.filter { lesson -> !lesson.canceled && lesson.studentPlan } }
+            .map { it.filter { lesson -> !lesson.canceled && lesson.isStudentPlan } }
             .map { day ->
                 day.forEachIndexed { index, lesson ->
                     val intent = createIntent(student, lesson, day.getOrNull(index + 1))
@@ -74,12 +75,12 @@ class TimetableNotificationSchedulerHelper @Inject constructor(
 
                     if (lesson.end > now()) {
                         scheduleBroadcast(intent, student.studentId, NOTIFICATION_TYPE_CURRENT, lesson.start)
-                        if (day.lastIndex == index) scheduleBroadcast(intent, student.studentId, NOTIFICATION_TYPE_LAST_LESSON_CANCELLATION, lesson.end)
+                        if (day.lastIndex == index) {
+                            scheduleBroadcast(intent, student.studentId, NOTIFICATION_TYPE_LAST_LESSON_CANCELLATION, lesson.end)
+                        }
                     }
                 }
             }
-
-        Timber.d("Timetable notifications (~${lessons.size}) scheduled")
     }
 
     private fun createIntent(student: Student, lesson: Timetable, nextLesson: Timetable?): Intent {
