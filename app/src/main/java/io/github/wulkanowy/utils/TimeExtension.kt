@@ -1,6 +1,5 @@
 package io.github.wulkanowy.utils
 
-import org.threeten.bp.DateTimeUtils
 import org.threeten.bp.DayOfWeek.FRIDAY
 import org.threeten.bp.DayOfWeek.MONDAY
 import org.threeten.bp.DayOfWeek.SATURDAY
@@ -35,12 +34,9 @@ fun LocalDate.toFormattedString(format: String = DATE_PATTERN): String = format(
 
 fun LocalDateTime.toFormattedString(format: String = DATE_PATTERN): String = format(ofPattern(format))
 
-fun LocalDateTime.toDate(): Date = DateTimeUtils.toDate(atZone(ZoneId.systemDefault()).toInstant())
-
 /**
  * https://github.com/ThreeTen/threetenbp/issues/55
  */
-
 fun Month.getFormattedName(): String {
     return getDisplayName(FULL_STANDALONE, Locale.getDefault())
         .let {
@@ -106,7 +102,6 @@ inline val LocalDate.friday: LocalDate
 /**
  * [Dz.U. 2016 poz. 1335](http://prawo.sejm.gov.pl/isap.nsf/DocDetails.xsp?id=WDU20160001335)
  */
-
 inline val LocalDate.isHolidays: Boolean
     get() = isBefore(firstSchoolDay) && isAfter(lastSchoolDay)
 
@@ -121,7 +116,6 @@ inline val LocalDate.firstSchoolDay: LocalDate
 inline val LocalDate.lastSchoolDay: LocalDate
     get() = LocalDate.of(year, 6, 20)
         .with(next(FRIDAY))
-
 
 private fun Int.getSchoolYearByMonth(monthValue: Int): Int {
     return when (monthValue) {
