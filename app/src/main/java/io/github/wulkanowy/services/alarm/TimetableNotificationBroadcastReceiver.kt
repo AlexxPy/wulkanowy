@@ -81,8 +81,8 @@ class TimetableNotificationBroadcastReceiver : BroadcastReceiver() {
 
         showNotification(context, notificationId, studentName,
             if (type == NOTIFICATION_TYPE_CURRENT) end else start,
-            context.getString(if (type == NOTIFICATION_TYPE_CURRENT) R.string.timetable_now else R.string.timetable_next, "$subject ($room)".removeSuffix("()")),
-            nextSubject?.let { context.getString(R.string.timetable_later, "$nextSubject ($nextRoom)".removeSuffix("()")) }
+            context.getString(if (type == NOTIFICATION_TYPE_CURRENT) R.string.timetable_now else R.string.timetable_next, "($room) $subject".removePrefix("()")),
+            nextSubject?.let { context.getString(R.string.timetable_later, "($nextRoom) $nextSubject".removePrefix("()")) }
         )
     }
 
