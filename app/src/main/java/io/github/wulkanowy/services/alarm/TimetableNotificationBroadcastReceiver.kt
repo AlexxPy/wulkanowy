@@ -7,14 +7,25 @@ import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import dagger.android.AndroidInjection
 import io.github.wulkanowy.R
+import io.github.wulkanowy.data.repositories.student.StudentRepository
 import io.github.wulkanowy.services.sync.channels.UpcomingLessonsChannel.Companion.CHANNEL_ID
 import io.github.wulkanowy.ui.modules.main.MainActivity
 import io.github.wulkanowy.ui.modules.main.MainView
+import io.github.wulkanowy.utils.SchedulersProvider
 import io.github.wulkanowy.utils.getCompatColor
+import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
+import javax.inject.Inject
 
 class TimetableNotificationBroadcastReceiver : BroadcastReceiver() {
+
+    @Inject
+    lateinit var studentRepository: StudentRepository
+
+    @Inject
+    lateinit var schedulers: SchedulersProvider
 
     companion object {
         const val NOTIFICATION_TYPE_CURRENT = 1
@@ -24,6 +35,7 @@ class TimetableNotificationBroadcastReceiver : BroadcastReceiver() {
         const val NOTIFICATION_ID = "id"
 
         const val STUDENT_NAME = "student_name"
+        const val STUDENT_ID = "student_id"
         const val LESSON_TYPE = "type"
         const val LESSON_TITLE = "title"
         const val LESSON_ROOM = "room"
@@ -34,6 +46,19 @@ class TimetableNotificationBroadcastReceiver : BroadcastReceiver() {
     }
 
     override fun onReceive(context: Context, intent: Intent) {
+        AndroidInjection.inject(this, context)
+
+        CompositeDisposable().add(studentRepository.getCurrentStudent(false)
+            .subscribeOn(schedulers.backgroundThread)
+            .observeOn(schedulers.mainThread)
+            .subscribe({
+                val studentId = intent.getIntExtra(STUDENT_ID, 0)
+                if (it.studentId == studentId) prepareNotification(context, intent)
+                else Timber.d("Notification studentId($studentId) differs from current(${it.studentId})")
+            }, { Timber.e(it) }))
+    }
+
+    private fun prepareNotification(context: Context, intent: Intent) {
         val type = intent.getIntExtra(LESSON_TYPE, 0)
         val notificationId = intent.getIntExtra(NOTIFICATION_ID, MainView.Section.TIMETABLE.id)
 

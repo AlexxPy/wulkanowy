@@ -22,6 +22,7 @@ import io.github.wulkanowy.services.alarm.TimetableNotificationBroadcastReceiver
 import io.github.wulkanowy.services.alarm.TimetableNotificationBroadcastReceiver.Companion.NOTIFICATION_TYPE_CURRENT
 import io.github.wulkanowy.services.alarm.TimetableNotificationBroadcastReceiver.Companion.NOTIFICATION_TYPE_LAST_LESSON_CANCELLATION
 import io.github.wulkanowy.services.alarm.TimetableNotificationBroadcastReceiver.Companion.NOTIFICATION_TYPE_UPCOMING
+import io.github.wulkanowy.services.alarm.TimetableNotificationBroadcastReceiver.Companion.STUDENT_ID
 import io.github.wulkanowy.services.alarm.TimetableNotificationBroadcastReceiver.Companion.STUDENT_NAME
 import io.github.wulkanowy.ui.modules.main.MainView
 import io.github.wulkanowy.utils.toTimestamp
@@ -85,6 +86,7 @@ class TimetableNotificationSchedulerHelper @Inject constructor(
 
     private fun createIntent(student: Student, lesson: Timetable, nextLesson: Timetable?): Intent {
         return Intent(context, TimetableNotificationBroadcastReceiver::class.java).apply {
+            putExtra(STUDENT_ID, student.studentId)
             putExtra(STUDENT_NAME, student.studentName)
             putExtra(LESSON_ROOM, lesson.room)
             putExtra(LESSON_START, lesson.start.toTimestamp())
