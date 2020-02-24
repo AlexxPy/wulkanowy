@@ -19,7 +19,7 @@ import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
 import javax.inject.Inject
 
-class TimetableNotificationBroadcastReceiver : BroadcastReceiver() {
+class TimetableNotificationReceiver : BroadcastReceiver() {
 
     @Inject
     lateinit var studentRepository: StudentRepository

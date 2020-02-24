@@ -11,19 +11,19 @@ import androidx.core.app.NotificationManagerCompat
 import io.github.wulkanowy.data.db.entities.Student
 import io.github.wulkanowy.data.db.entities.Timetable
 import io.github.wulkanowy.data.repositories.preferences.PreferencesRepository
-import io.github.wulkanowy.services.alarm.TimetableNotificationBroadcastReceiver.Companion.LESSON_END
-import io.github.wulkanowy.services.alarm.TimetableNotificationBroadcastReceiver.Companion.LESSON_NEXT_ROOM
-import io.github.wulkanowy.services.alarm.TimetableNotificationBroadcastReceiver.Companion.LESSON_NEXT_TITLE
-import io.github.wulkanowy.services.alarm.TimetableNotificationBroadcastReceiver.Companion.LESSON_ROOM
-import io.github.wulkanowy.services.alarm.TimetableNotificationBroadcastReceiver.Companion.LESSON_START
-import io.github.wulkanowy.services.alarm.TimetableNotificationBroadcastReceiver.Companion.LESSON_TITLE
-import io.github.wulkanowy.services.alarm.TimetableNotificationBroadcastReceiver.Companion.LESSON_TYPE
-import io.github.wulkanowy.services.alarm.TimetableNotificationBroadcastReceiver.Companion.NOTIFICATION_ID
-import io.github.wulkanowy.services.alarm.TimetableNotificationBroadcastReceiver.Companion.NOTIFICATION_TYPE_CURRENT
-import io.github.wulkanowy.services.alarm.TimetableNotificationBroadcastReceiver.Companion.NOTIFICATION_TYPE_LAST_LESSON_CANCELLATION
-import io.github.wulkanowy.services.alarm.TimetableNotificationBroadcastReceiver.Companion.NOTIFICATION_TYPE_UPCOMING
-import io.github.wulkanowy.services.alarm.TimetableNotificationBroadcastReceiver.Companion.STUDENT_ID
-import io.github.wulkanowy.services.alarm.TimetableNotificationBroadcastReceiver.Companion.STUDENT_NAME
+import io.github.wulkanowy.services.alarm.TimetableNotificationReceiver.Companion.LESSON_END
+import io.github.wulkanowy.services.alarm.TimetableNotificationReceiver.Companion.LESSON_NEXT_ROOM
+import io.github.wulkanowy.services.alarm.TimetableNotificationReceiver.Companion.LESSON_NEXT_TITLE
+import io.github.wulkanowy.services.alarm.TimetableNotificationReceiver.Companion.LESSON_ROOM
+import io.github.wulkanowy.services.alarm.TimetableNotificationReceiver.Companion.LESSON_START
+import io.github.wulkanowy.services.alarm.TimetableNotificationReceiver.Companion.LESSON_TITLE
+import io.github.wulkanowy.services.alarm.TimetableNotificationReceiver.Companion.LESSON_TYPE
+import io.github.wulkanowy.services.alarm.TimetableNotificationReceiver.Companion.NOTIFICATION_ID
+import io.github.wulkanowy.services.alarm.TimetableNotificationReceiver.Companion.NOTIFICATION_TYPE_CURRENT
+import io.github.wulkanowy.services.alarm.TimetableNotificationReceiver.Companion.NOTIFICATION_TYPE_LAST_LESSON_CANCELLATION
+import io.github.wulkanowy.services.alarm.TimetableNotificationReceiver.Companion.NOTIFICATION_TYPE_UPCOMING
+import io.github.wulkanowy.services.alarm.TimetableNotificationReceiver.Companion.STUDENT_ID
+import io.github.wulkanowy.services.alarm.TimetableNotificationReceiver.Companion.STUDENT_NAME
 import io.github.wulkanowy.ui.modules.main.MainView
 import io.github.wulkanowy.utils.toTimestamp
 import org.threeten.bp.LocalDateTime
@@ -85,7 +85,7 @@ class TimetableNotificationSchedulerHelper @Inject constructor(
     }
 
     private fun createIntent(student: Student, lesson: Timetable, nextLesson: Timetable?): Intent {
-        return Intent(context, TimetableNotificationBroadcastReceiver::class.java).apply {
+        return Intent(context, TimetableNotificationReceiver::class.java).apply {
             putExtra(STUDENT_ID, student.studentId)
             putExtra(STUDENT_NAME, student.studentName)
             putExtra(LESSON_ROOM, lesson.room)
