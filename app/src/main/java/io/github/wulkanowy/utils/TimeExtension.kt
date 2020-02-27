@@ -19,7 +19,7 @@ private const val DATE_PATTERN = "dd.MM.yyyy"
 
 fun String.toLocalDate(format: String = DATE_PATTERN): LocalDate = LocalDate.parse(this, ofPattern(format))
 
-fun LocalDateTime.toTimestamp() = atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+fun LocalDateTime.toTimestamp() = atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.systemDefault()).toInstant().toEpochMilli()
 
 fun LocalDate.toFormattedString(format: String = DATE_PATTERN): String = format(ofPattern(format))
 
