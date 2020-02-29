@@ -15,7 +15,9 @@ import io.github.wulkanowy.ui.modules.main.MainActivity
 import io.github.wulkanowy.ui.modules.main.MainView
 import io.github.wulkanowy.utils.SchedulersProvider
 import io.github.wulkanowy.utils.getCompatColor
+import io.github.wulkanowy.utils.toTimestamp
 import io.reactivex.disposables.CompositeDisposable
+import org.threeten.bp.LocalDateTime
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -71,8 +73,8 @@ class TimetableNotificationReceiver : BroadcastReceiver() {
         val subject = intent.getStringExtra(LESSON_TITLE)
         val room = intent.getStringExtra(LESSON_ROOM)
 
-        val start = intent.getLongExtra(LESSON_START, 0)
-        val end = intent.getLongExtra(LESSON_END, 0)
+        val start = intent.getSerializableExtra(LESSON_START) as LocalDateTime
+        val end = intent.getSerializableExtra(LESSON_END) as LocalDateTime
 
         val nextSubject = intent.getStringExtra(LESSON_NEXT_TITLE)
         val nextRoom = intent.getStringExtra(LESSON_NEXT_ROOM)
@@ -80,7 +82,7 @@ class TimetableNotificationReceiver : BroadcastReceiver() {
         Timber.d("TimetableNotificationReceiver receive intent: type: $type, subject: $subject, room: $room, start: $start")
 
         showNotification(context, notificationId, studentName,
-            if (type == NOTIFICATION_TYPE_CURRENT) end else start, end - start,
+            if (type == NOTIFICATION_TYPE_CURRENT) end.toTimestamp() else start.toTimestamp(), end.toTimestamp() - start.toTimestamp(),
             context.getString(if (type == NOTIFICATION_TYPE_CURRENT) R.string.timetable_now else R.string.timetable_next, "($room) $subject".removePrefix("()")),
             nextSubject?.let { context.getString(R.string.timetable_later, "($nextRoom) $nextSubject".removePrefix("()")) }
         )
