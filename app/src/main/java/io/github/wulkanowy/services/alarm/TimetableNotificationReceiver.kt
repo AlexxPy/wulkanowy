@@ -77,16 +77,16 @@ class TimetableNotificationReceiver : BroadcastReceiver() {
         val nextSubject = intent.getStringExtra(LESSON_NEXT_TITLE)
         val nextRoom = intent.getStringExtra(LESSON_NEXT_ROOM)
 
-        Timber.d("TimetableNotificationBroadcastReceiver receive intent: type: $type, subject: $subject, room: $room, start: $start")
+        Timber.d("TimetableNotificationReceiver receive intent: type: $type, subject: $subject, room: $room, start: $start")
 
         showNotification(context, notificationId, studentName,
-            if (type == NOTIFICATION_TYPE_CURRENT) end else start,
+            if (type == NOTIFICATION_TYPE_CURRENT) end else start, end - start,
             context.getString(if (type == NOTIFICATION_TYPE_CURRENT) R.string.timetable_now else R.string.timetable_next, "($room) $subject".removePrefix("()")),
             nextSubject?.let { context.getString(R.string.timetable_later, "($nextRoom) $nextSubject".removePrefix("()")) }
         )
     }
 
-    private fun showNotification(context: Context, notificationId: Int, studentName: String?, countDown: Long, title: String, next: String?) {
+    private fun showNotification(context: Context, notificationId: Int, studentName: String?, countDown: Long, timeout: Long, title: String, next: String?) {
         NotificationManagerCompat.from(context).notify(notificationId, NotificationCompat.Builder(context, CHANNEL_ID)
             .setContentTitle(title)
             .setContentText(next)
@@ -94,6 +94,7 @@ class TimetableNotificationReceiver : BroadcastReceiver() {
             .setOngoing(true)
             .setWhen(countDown)
             .setUsesChronometer(true)
+            .setTimeoutAfter(timeout)
             .setSmallIcon(R.drawable.ic_main_timetable)
             .setColor(context.getCompatColor(R.color.colorPrimary))
             .setStyle(NotificationCompat.InboxStyle().also {
