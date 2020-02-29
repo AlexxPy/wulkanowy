@@ -67,15 +67,13 @@
         android:layout_marginStart="10dp"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="1dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
         android:layout_toEndOf="@id/timetableSmallItemRoom"
         android:layout_toRightOf="@id/timetableSmallItemRoom"
         android:ellipsize="end"
         android:maxLines="1"
         android:textColor="?android:textColorSecondary"
         android:textSize="13sp"
-        tools:text="Agata Kowalska - Błaszczyk" />
+        tools:text="Agata" />
 
     <TextView
         android:id="@+id/timetableSmallItemDescription"
@@ -89,9 +87,9 @@
         android:layout_toEndOf="@id/timetableSmallItemTeacher"
         android:layout_toRightOf="@id/timetableSmallItemTeacher"
         android:ellipsize="end"
-        android:maxLines="1"
+        android:singleLine="true"
         android:textColor="?android:textColorSecondary"
         android:textSize="13sp"
-        tools:text="zastępstwo" />
+        tools:text="zastępstwo jakieś tam gdzieś tam" />
 
 </RelativeLayout>
