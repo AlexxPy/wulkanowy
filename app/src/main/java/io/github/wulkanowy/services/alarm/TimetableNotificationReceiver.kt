@@ -79,7 +79,7 @@ class TimetableNotificationReceiver : BroadcastReceiver() {
         val nextSubject = intent.getStringExtra(LESSON_NEXT_TITLE)
         val nextRoom = intent.getStringExtra(LESSON_NEXT_ROOM)
 
-        Timber.d("TimetableNotificationReceiver receive intent: type: $type, subject: $subject, room: $room, start: $start")
+        Timber.d("TimetableNotification receive: type: $type, subject: $subject, room: $room, start: $start")
 
         showNotification(context, notificationId, studentName,
             if (type == NOTIFICATION_TYPE_CURRENT) end.toTimestamp() else start.toTimestamp(), end.toTimestamp() - start.toTimestamp(),

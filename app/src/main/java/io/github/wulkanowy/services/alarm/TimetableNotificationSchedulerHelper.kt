@@ -49,7 +49,7 @@ class TimetableNotificationSchedulerHelper @Inject constructor(
             cancelScheduledTo(upcomingTime..lesson.start, getRequestCode(upcomingTime, studentId))
             cancelScheduledTo(lesson.start..lesson.end, getRequestCode(lesson.start, studentId))
 
-            Timber.d("Timetable notification for lesson started at ${lesson.start} canceled")
+            Timber.d("TimetableNotification canceled: type 1 & 2, subject: ${lesson.subject}, start: ${lesson.start}, student: $studentId")
         }
     }
 
@@ -104,6 +104,6 @@ class TimetableNotificationSchedulerHelper @Inject constructor(
                 it.putExtra(LESSON_TYPE, notificationType)
             }, FLAG_CANCEL_CURRENT)
         )
-        Timber.d("Timetable notification from studentId: $studentId, with notification type: $notificationType scheduled at $time")
+        Timber.d("TimetableNotification scheduled: type: $notificationType, subject: ${intent.getStringExtra(LESSON_TITLE)}, start: $time, student: $studentId")
     }
 }
