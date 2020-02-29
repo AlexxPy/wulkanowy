@@ -12,7 +12,7 @@ import javax.inject.Singleton
 class LuckyNumberRemote @Inject constructor(private val sdk: Sdk) {
 
     fun getLuckyNumber(student: Student): Maybe<LuckyNumber> {
-        return sdk.getLuckyNumber().map {
+        return sdk.getLuckyNumber(student.schoolShortName).map {
             LuckyNumber(
                 studentId = student.studentId,
                 date = LocalDate.now(),
