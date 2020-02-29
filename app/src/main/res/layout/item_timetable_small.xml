@@ -77,4 +77,21 @@
         android:textSize="13sp"
         tools:text="Agata Kowalska - Błaszczyk" />
 
+    <TextView
+        android:id="@+id/timetableSmallItemDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="1dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_toEndOf="@id/timetableSmallItemTeacher"
+        android:layout_toRightOf="@id/timetableSmallItemTeacher"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="?android:textColorSecondary"
+        android:textSize="13sp"
+        tools:text="zastępstwo" />
+
 </RelativeLayout>

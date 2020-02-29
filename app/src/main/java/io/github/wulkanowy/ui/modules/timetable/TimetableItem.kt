@@ -47,6 +47,7 @@ class TimetableItem(val lesson: Timetable, private val showWholeClassPlan: Strin
             timetableSmallItemTeacher.text = lesson.teacher
 
             updateSubjectStyle(timetableSmallItemSubject)
+            updateSmallDescription(this)
             updateSmallColors(this)
         }
     }
@@ -69,6 +70,27 @@ class TimetableItem(val lesson: Timetable, private val showWholeClassPlan: Strin
     private fun updateSubjectStyle(subjectView: TextView) {
         subjectView.paintFlags = if (lesson.canceled) subjectView.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
         else subjectView.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
+    }
+
+    private fun updateSmallDescription(holder: ViewHolder) {
+        with(holder) {
+            if (lesson.info.isNotBlank() && !lesson.changes) {
+                timetableSmallItemDescription.visibility = VISIBLE
+                timetableSmallItemDescription.text = lesson.info
+
+                timetableSmallItemRoom.visibility = GONE
+                timetableSmallItemTeacher.visibility = GONE
+
+                timetableSmallItemDescription.setTextColor(holder.view.context.getThemeAttrColor(
+                    if (lesson.canceled) R.attr.colorPrimary
+                    else R.attr.colorTimetableChange
+                ))
+            } else {
+                timetableSmallItemDescription.visibility = GONE
+                timetableSmallItemRoom.visibility = VISIBLE
+                timetableSmallItemTeacher.visibility = VISIBLE
+            }
+        }
     }
 
     private fun updateNormalDescription(holder: ViewHolder) {
