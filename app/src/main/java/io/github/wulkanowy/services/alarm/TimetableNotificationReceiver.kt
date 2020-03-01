@@ -15,6 +15,7 @@ import io.github.wulkanowy.ui.modules.main.MainActivity
 import io.github.wulkanowy.ui.modules.main.MainView
 import io.github.wulkanowy.utils.SchedulersProvider
 import io.github.wulkanowy.utils.getCompatColor
+import io.github.wulkanowy.utils.toLocalDateTime
 import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
 import javax.inject.Inject
@@ -66,6 +67,7 @@ class TimetableNotificationReceiver : BroadcastReceiver() {
             return NotificationManagerCompat.from(context).cancel(notificationId)
         }
 
+        val studentId = intent.getIntExtra(STUDENT_ID, 0)
         val studentName = intent.getStringExtra(STUDENT_NAME)
 
         val subject = intent.getStringExtra(LESSON_TITLE)
@@ -77,7 +79,7 @@ class TimetableNotificationReceiver : BroadcastReceiver() {
         val nextSubject = intent.getStringExtra(LESSON_NEXT_TITLE)
         val nextRoom = intent.getStringExtra(LESSON_NEXT_ROOM)
 
-        Timber.d("TimetableNotification receive: type: $type, subject: $subject, room: $room, start: $start")
+        Timber.d("TimetableNotification receive: type: $type, subject: $subject, start: ${start.toLocalDateTime()}, student: $studentId")
 
         showNotification(context, notificationId, studentName,
             if (type == NOTIFICATION_TYPE_CURRENT) end else start, end - start,
