@@ -68,7 +68,7 @@ class MessageRepositoryTest {
 
     @Test
     fun `get message when content in db is empty`() {
-        val testMessage = Message(1, 1, 123, "", 1, "", "", "", now(), 1, false, 1, 1, false)
+        val testMessage = Message(1, 1, 123, "", 1, "", "", "", now(), 1, true, 1, 1, false)
         val testMessageWithContent = testMessage.copy(content = "Test")
 
         `when`(local.getMessage(123))
