@@ -47,6 +47,7 @@ class TimetableNotificationReceiver : BroadcastReceiver() {
     }
 
     override fun onReceive(context: Context, intent: Intent) {
+        Timber.d("Receiving intent... ${intent.toUri(0)}")
         AndroidInjection.inject(this, context)
 
         CompositeDisposable().add(studentRepository.getCurrentStudent(false)
