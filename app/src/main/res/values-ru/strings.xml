@@ -80,7 +80,7 @@
     <string name="grade_switch_semester">Сменить семестр</string>
     <string name="grade_no_items">Оценки отсутствуют</string>
     <string name="grade_weight">Вес</string>
-    <string name="grade_weight_value">Weight: %s</string>
+    <string name="grade_weight_value">Bес: %s</string>
     <string name="grade_comment">Комментарий</string>
     <string name="grade_no_new_items">Новые оценки отсутствуют</string>
     <string name="grade_number_new_items">Количество новых оценок: %1$d</string>
