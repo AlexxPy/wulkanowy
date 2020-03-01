@@ -140,7 +140,7 @@ class TimetablePresenter @Inject constructor(
                 }
                 .delay(200, MILLISECONDS)
                 .map { createTimetableItems(it) }
-                .map { items -> items.sortedBy { it.lesson.number } }
+                .map { items -> items.sortedWith(compareBy({ it.lesson.number }, { !it.lesson.isStudentPlan })) }
                 .subscribeOn(schedulers.backgroundThread)
                 .observeOn(schedulers.mainThread)
                 .doFinally {

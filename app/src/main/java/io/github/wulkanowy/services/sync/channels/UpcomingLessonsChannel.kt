@@ -13,13 +13,13 @@ import javax.inject.Inject
 class UpcomingLessonsChannel @Inject constructor(
     private val notificationManager: NotificationManagerCompat,
     private val context: Context
-) {
+) : Channel {
 
     companion object {
         const val CHANNEL_ID = "lesson_channel"
     }
 
-    fun create() {
+    override fun create() {
         notificationManager.createNotificationChannel(
             NotificationChannel(CHANNEL_ID, context.getString(R.string.channel_upcoming_lessons), IMPORTANCE_DEFAULT).apply {
                 lockscreenVisibility = VISIBILITY_PUBLIC
