@@ -14,14 +14,15 @@
     <string name="settings_title">Settings</string>
     <string name="more_title">More</string>
     <string name="about_title">About</string>
-    <string name="logviewer_title">Log viewer</string>
-    <string name="creators_title">Creators</string>
+    <string name="logviewer_title">Переглядач журналів</string>
+    <string name="creators_title">Творці</string>
     <string name="license_title">Licenses</string>
     <string name="message_title">Messages</string>
     <string name="send_message_title">New message</string>
     <string name="note_title">Notes and achievements</string>
     <string name="homework_title">Homework</string>
     <string name="account_title">Choose account</string>
+
 
     <!--Subtitles-->
     <string name="grade_subtitle">Semester %d, %d/%d</string>
@@ -63,7 +64,7 @@
     <string name="login_email_intent_title">Send email</string>
     <string name="login_email_subject" translatable="false">Zgłoszenie: Problemy z logowaniem</string>
     <string name="login_email_text" translatable="false">Informacje o aplikacji:\n\nUrządzenie: %1$s\nWersja SDK: %2$s\nWersja aplikacji: %3$s\n\nOpis problemu:</string>
-    <string name="login_recover_button">I forgot my password</string>
+    <string name="login_recover_button">Я забув свій пароль</string>
     <string name="login_recover_title">Recover your account</string>
     <string name="login_recover">Recover</string>
     <string name="login_signed_in">Student is already signed in</string>

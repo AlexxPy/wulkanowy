@@ -14,6 +14,7 @@
     <string name="settings_title">Ustawienia</string>
     <string name="more_title">Więcej</string>
     <string name="about_title">O aplikacji</string>
+    <string name="logviewer_title">Przeglądarka logów</string>
     <string name="creators_title">Twórcy</string>
     <string name="license_title">Licencje</string>
     <string name="message_title">Wiadomości</string>
@@ -314,8 +315,7 @@
     <string name="creator_see_more">Zobacz więcej na GitHub</string>
 
     <!--Log viewer-->
-    <string name="logviewer_title">Przeglądarka logów</string>
-    <string name="logviewer_share">Share logs</string>
+    <string name="logviewer_share">Udostępnij logi</string>
     <string name="logviewer_refresh">Odśwież</string>
 
 

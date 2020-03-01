@@ -14,6 +14,8 @@
     <string name="settings_title">Налаштування</string>
     <string name="more_title">Ще</string>
     <string name="about_title">Про додаток</string>
+    <string name="logviewer_title">Log viewer</string>
+    <string name="creators_title">Creators</string>
     <string name="license_title">Ліцензії</string>
     <string name="message_title">Повідомлення</string>
     <string name="send_message_title">Нове повідомлення</string>
@@ -22,11 +24,16 @@
     <string name="account_title">Виберіть акаунт</string>
 
 
+    <!--Subtitles-->
+    <string name="grade_subtitle">Семестр %d, %d/%d</string>
+
+
     <!--Login-->
     <string name="login_header_default">Авторизуйтеся за допомогою акаунта учня або батьків</string>
     <string name="login_header_symbol">Впишіть \"symbol\"</string>
     <string name="login_nickname_hint">Ім\'я користувача</string>
     <string name="login_email_hint">Електронна пошта</string>
+    <string name="login_login_pesel_email_hint">Логин, PESEL или электронная почта</string>
     <string name="login_password_hint">Пароль</string>
     <string name="login_host_hint">Щоденник</string>
     <string name="login_type_api">Мобільний API</string>
@@ -41,6 +48,7 @@
     <string name="login_incorrect_password">Вказані неправільні дані</string>
     <string name="login_invalid_pin">Недійсний PIN</string>
     <string name="login_invalid_token">Недійсний token</string>
+    <string name="login_invalid_email">Недійсний адрес электронной почты</string>
     <string name="login_expired_token">Токен прострочений</string>
     <string name="login_invalid_symbol">Недійсний symbol</string>
     <string name="login_incorrect_symbol">Не вдалося знайти учня. Будь ласка, перевірте \"symbol\"</string>
@@ -54,6 +62,9 @@
     <string name="login_contact_email">Електронна пошта</string>
     <string name="login_contact_discord">Discord</string>
     <string name="login_email_intent_title">Відправити листа</string>
+    <string name="login_recover_button">I forgot my password</string>
+    <string name="login_recover_title">Відновіть свій рахунок</string>
+    <string name="login_recover">Відновити</string>
     <string name="login_signed_in">Учень вже ввійшов в систему</string>
 
 
@@ -70,6 +81,7 @@
     <string name="grade_switch_semester">Змінити семестр</string>
     <string name="grade_no_items">Оцінки відсутні</string>
     <string name="grade_weight">Вага</string>
+    <string name="grade_weight_value">Вага: %s</string>
     <string name="grade_comment">Коментарій</string>
     <string name="grade_no_new_items">Нові оцінки відсутні</string>
     <string name="grade_number_new_items">Кількість нових оцінок: %1$d</string>
@@ -144,6 +156,11 @@
         <item quantity="many">%1$d відсутностей</item>
         <item quantity="other">%1$d відсутностей</item>
     </plurals>
+    <string name="attendance_excuse_dialog_reason">Причина відсутності (необов’язково)</string>
+    <string name="attendance_excuse_dialog_submit">Надіслати</string>
+    <string name="attendance_excuse_success">Виправдано успішно!</string>
+    <string name="attendance_excuse_no_selection">Ви повинні вибрати хоча б одну відсутність!</string>
+    <string name="attendance_excuse_title">Oбґрунтовувати</string>
 
 
     <!--Attendance summary-->
@@ -274,6 +291,8 @@
 
     <!--About-->
     <string name="about_version">Версія додатку</string>
+    <string name="about_creator">Tворці</string>
+    <string name="about_creator_summary">Список Wulkanowy програмістів</string>
     <string name="about_feedback">Повідомити про помилку</string>
     <string name="about_feedback_summary">Відправити повідомлення про помилку електронною поштою</string>
     <string name="about_faq">FAQ</string>
@@ -290,6 +309,16 @@
 
     <!--Licenses-->
     <string name="license_dialog_title">Ліцензія</string>
+
+
+    <!--Creators-->
+    <string name="creator_avatar_description">Аватар</string>
+    <string name="creator_see_more">Дивіться більше на GitHub</string>
+
+
+    <!--Log viewer-->
+    <string name="logviewer_share">Поділитися журналами</string>
+    <string name="logviewer_refresh">Оновити</string>
 
 
     <!--Generic-->
@@ -347,6 +376,10 @@
 
     <!--Notification Channels-->
     <string name="channel_new_entries">Нові дані в щоденнику</string>
+    <string name="channel_lucky_number">Вдалий номер</string>
+    <string name="channel_new_grades">Нові оцінки</string>
+    <string name="channel_new_message">Нові повідомлення</string>
+    <string name="channel_new_notes">Нові зауваження</string>
     <string name="channel_debug">Дебаг</string>
 
 
