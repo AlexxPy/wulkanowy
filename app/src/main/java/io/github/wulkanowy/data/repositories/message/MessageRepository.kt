@@ -54,7 +54,7 @@ class MessageRepository @Inject constructor(
                     .filter { it.content.isNotEmpty() }
                     .switchIfEmpty(ReactiveNetwork.checkInternetConnectivity(settings)
                         .flatMap {
-                            if (it) local.getMessage(messageDbId).toSingle()
+                            if (it) local.getMessage(messageDbId)
                             else Single.error(UnknownHostException())
                         }
                         .flatMap { dbMessage ->
@@ -65,7 +65,7 @@ class MessageRepository @Inject constructor(
                                 }))
                             }
                         }.flatMap {
-                            local.getMessage(messageDbId).toSingle()
+                            local.getMessage(messageDbId)
                         }
                     )
             }
